@@ -12,6 +12,13 @@ router.post(
     postController.createPost
 );
 
+// Create post - validates body only
+router.post(
+    "/",
+    validateRequest(postSchemas.create),
+    postController.createPost
+);
+
 // Get single post - validates params and optional query
 router.get(
     "/:id",
