@@ -1,53 +1,57 @@
 import express from "express";
 import { validateRequest } from "../middleware/validate";
-import * as postController from "../controllers/postController";
-import { postSchemas } from "../validation/postSchemas";
+import * as Controller from "../controllers/Controller";
+import { Schemas } from "../validation/Schemas";
+import { itemsHealthCheck } from "../controllers/Controller";
 
 const router = express.Router();
+
+// Health check endpoint
+router.get("/health", itemsHealthCheck);
 
 // Create post - validates body only
 router.post(
     "/",
-    validateRequest(postSchemas.create),
-    postController.createPost
+    validateRequest(Schemas.create),
+    Controller.createPost
 );
 
 // Create post - validates body only
 router.post(
     "/",
-    validateRequest(postSchemas.create),
-    postController.createPost
+    validateRequest(Schemas.create),
+    Controller.createPost
 );
 
 // Get single post - validates params and optional query
 router.get(
     "/:id",
-    validateRequest(postSchemas.getById),
-    postController.getPost
+    validateRequest(Schemas.getById),
+    Controller.getPost
 );
 
 // Update post - validates both params and body
 router.put(
     "/:id",
-    validateRequest(postSchemas.update),
-    postController.updatePost
+    validateRequest(Schemas.update),
+    Controller.updatePost
 );
 
 // Delete post - validates params only
 router.delete(
     "/:id",
-    validateRequest(postSchemas.delete),
-    postController.deletePost
+    validateRequest(Schemas.delete),
+    Controller.deletePost
 );
 
 // List posts - validates query parameters for filtering/pagination
-router.get("/", validateRequest(postSchemas.list), postController.listPosts);
+router.get("/", validateRequest(Schemas.list), Controller.listPosts);
 
 // Example with custom validation options
 router.post(
     "/flexible",
-    validateRequest(postSchemas.create, { stripBody: false }),
-    postController.createPostFlexible
+    validateRequest(Schemas.create, { stripBody: false }),
+    Controller.createPostFlexible
 );
 
 export default router;
