@@ -53,17 +53,4 @@ export const postSchemas = {
             }),
         }),
     },
-
-    // GET /posts - List posts with filtering
-    list: {
-        query: Joi.object({
-            page: Joi.number().integer().min(1).default(1),
-            limit: Joi.number().integer().min(1).max(100).default(10),
-            userId: Joi.string().optional(),
-            sortBy: Joi.string()
-                .valid("createdAt", "updatedAt")
-                .default("createdAt"),
-            sortOrder: Joi.string().valid("asc", "desc").default("desc"),
-        }),
-    },
 };
