@@ -1,29 +1,43 @@
-import { Post } from "../models/postModel";
 import * as firestoreRepository from "../repositories/firestoreRepository";
-import { postModelSchema } from "../validations/postValidation";
-import { validate } from "../middleware/validate";
+import { Schemas } from "../validation/Schemas";
+import { validateRequest } from "../middleware/validate";
+import { Events } from "../models/eventsModel";
+
+// Generate IDs like evt_000001
+let eventCounter = 0;
+const generateEventId = (): string => {
+    eventCounter += 1;
+    return `evt_${eventCounter.toString().padStart(6, "0")}`;
+};
 
 /**
  * Updates an existing post.
- * @param {Post} postData - The updated post data.
+ * @param {Events} data - The updated events data.
  * @returns {Promise<void>}
  * @throws {Error} - If validation or repository operation fails.
  */
-export const updatePost = async (postData: Post): Promise<void> => {
+export const createEvent = async (data: Partial<Events>): Promise<void> => {
     try {
-        validate(postModelSchema, postData);
-        await firestoreRepository.updateDocument(
-            POSTS_COLLECTION,
-            postData.id,
-            postData
-        );
+        const newId = generateEventId();
+
+        const eventData: Events = {
+            id: newId,
+            name: data.name || "Untitled Event",
+            date: data.date || new Date(),
+            capacity: data.capacity || 0,
+            registrationCount: data.registrationCount || 0,
+            status: data.status || "active",
+            category: data.category || "general",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+        validateRequest(Schemas.create, data);
+        await firestoreRepository.createDocument("events", eventData, newId);
     } catch (error: unknown) {
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error";
         throw new Error(
-            `Failed to update post ${postData.id}: ${errorMessage}`
+            `Failed to update post ${data.id}: ${errorMessage}`
         );
     }
 };
-
-// ... other service functions (getPostById, updatePost, deletePost) ...

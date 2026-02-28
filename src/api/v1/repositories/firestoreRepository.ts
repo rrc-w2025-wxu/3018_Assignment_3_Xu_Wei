@@ -1,26 +1,28 @@
-import { db } from "../../../config/firebaseConfig";
-import { FirestoreDataTypes } from "../types/firestore";
-
-interface FieldValuePair {
-    fieldName: string;
-    fieldValue: FirestoreDataTypes;
-}
+import { db } from "../../../../config/firebaseConfig";
+import { FirestoreDataTypes } from "../../../types/firestore";
 
 /**
- * Updates an existing document in a specified Firestore collection.
+ * Creates a new document in a specified Firestore collection.
  * @param {string} collectionName - The name of the collection.
- * @param {string} id - The ID of the document to update.
- * @param {Partial<T>} data - The updated document data.
- * @returns {Promise<void>}
- * @throws {Error} - If an error occurs during document update.
+ * @param {Partial<T>} data - The data for the new document.
+ * @returns {Promise<string>} - The ID of the newly created document.
  */
-export const updateDocument = async <T>(
+export const createDocument = async <T>(
     collectionName: string,
-    id: string,
-    data: Partial<T>
-): Promise<void> => {
+    data: Partial<FirestoreDataTypes>,
+    id?: string
+): Promise<string> => {
     try {
-        await db.collection(collectionName).doc(id).update(data);
+        let docRef: FirebaseFirestore.DocumentReference;
+
+        if (id) {
+            docRef = db.collection(collectionName).doc(id);
+            await docRef.set(data);
+        } else {
+            docRef = await db.collection(collectionName).add(data);
+        }
+
+        return docRef.id;
     } catch (error: unknown) {
         const errorMessage =
             error instanceof Error ? error.message : "Unknown error";
@@ -29,5 +31,3 @@ export const updateDocument = async <T>(
         );
     }
 };
-
-// ... other repository functions (getDocumentById, createDocument, deleteDocument) ...
