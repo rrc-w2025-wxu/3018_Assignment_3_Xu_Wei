@@ -29,6 +29,9 @@ router.put("/events/:id",
 );
 
 // Delete a single event - validates body only
-router.delete("/events/:id", Controller.allEventsController);
+router.delete("/events/:id", 
+    validateRequest(Schemas.delete),
+    Controller.deleteEventController
+);
 
 export default router;

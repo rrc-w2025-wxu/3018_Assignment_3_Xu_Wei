@@ -58,31 +58,63 @@ export const allEventsController = async (req: Request, res: Response):Promise<v
   }
 };
 
-export const singleEventController = async (req: Request<{ id:string }>, res: Response):Promise<void> => {
+export const singleEventController = async (req: Request<{ id:string }>, res: Response):Promise<Response> => {
     try {
         const id:string = req.params.id;
+        if(!id){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event ID is not found"});
+        }
         const event = await Service.getEvent(id);
-        res.status(HTTP_STATUS.OK).json({ message:"Event retrieved", data: event });
+        if(!event){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event is not found"});
+        }
+        return res.status(HTTP_STATUS.OK).json({ message:"Event retrieved", data: event });
     }catch (error: unknown) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     } else {
-      res.status(500).json({ message: "Unknown error" });
+      return res.status(500).json({ message: "Unknown error" });
     }
   }
 };
 
-export const updateEventController = async (req: Request<{ id:string }, Partial<Events>>, res: Response): Promise<void> => {
+export const updateEventController = async (req: Request<{ id:string }, Partial<Events>>, res: Response): Promise<Response> => {
     try {
         const id:string = req.params.id;
+        if(!id){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event ID is not found"});
+        }
         const data:Partial<Events> = req.body;
         const updateEvent = await Service.updateEvent(id, data);
-        res.status(HTTP_STATUS.OK).json({message:"Event updated", data: updateEvent});
+        if(!updateEvent){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event is not found"});
+        }
+        return res.status(HTTP_STATUS.OK).json({message:"Event updated", data: updateEvent});
     }catch (error: unknown) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: error.message });
     } else {
-      res.status(500).json({ message: "Unknown error" });
+      return res.status(500).json({ message: "Unknown error" });
+    }
+  }  
+};
+
+export const deleteEventController = async (req: Request<{ id:string }>, res: Response): Promise<Response> => {
+    try{
+        const id:string = req.params.id;
+        if(!id){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event ID is not found"});
+        }
+        const deleteevent = await Service.deleteEvent(id);
+        if(!deleteevent){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event is not found"});
+        }
+        return res.status(HTTP_STATUS.OK).json({ message: `${id} deleted`, data: deleteevent });
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(500).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Unknown error" });
     }
   }  
 };
