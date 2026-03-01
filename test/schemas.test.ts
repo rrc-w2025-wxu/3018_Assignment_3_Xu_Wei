@@ -3,7 +3,7 @@ import { Schemas } from "../src/api/v1/validation/Schemas";
 
 describe("Event Schema Validation (Joi)", () => {
 
-  // ✅ 1️⃣ Valid data should pass
+  // Valid data should pass
   it("should pass with valid event data", () => {
     const validEvent = {
       name: "Tech Conference",
@@ -19,7 +19,7 @@ describe("Event Schema Validation (Joi)", () => {
     expect(error).toBeUndefined();
   });
 
-  // ❌ 2️⃣ Name too short
+  // Name too short
   it("should fail if name is less than 3 characters", () => {
     const invalidEvent = {
       name: "AB",
@@ -36,7 +36,7 @@ describe("Event Schema Validation (Joi)", () => {
     expect(error?.message).toContain("length must be at least 3");
   });
 
-  // ❌ 3️⃣ Capacity less than 5
+  // Capacity less than 5
   it("should fail if capacity is less than 5", () => {
     const invalidEvent = {
       name: "Tech Conference",
@@ -53,7 +53,7 @@ describe("Event Schema Validation (Joi)", () => {
     expect(error?.message).toContain("greater than or equal to 5");
   });
 
-  // ❌ 4️⃣ registrationCount > capacity
+  // registrationCount > capacity
   it("should fail if registrationCount exceeds capacity", () => {
     const invalidEvent = {
       name: "Tech Conference",

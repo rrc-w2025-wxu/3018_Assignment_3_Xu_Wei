@@ -1,4 +1,5 @@
 import { db } from "../../../../config/firebaseConfig";
+import { QuerySnapshot } from "firebase-admin/firestore";
 
 /**
  * Creates a new document in a specified Firestore collection.
@@ -29,4 +30,16 @@ export const createDocument = async <T>(
             `Failed to create document in ${collectionName}: ${errorMessage}`
         );
     }
+};
+
+export const getAllEvents = async (): Promise<any[]> => {
+    // Retrieve all documents from the 'users' collection
+    // `get()` returns a QuerySnapshot containing all documents in the collection
+    const snapshot: QuerySnapshot = await db.collection("events").get();
+
+    const events = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+    return events;
 };

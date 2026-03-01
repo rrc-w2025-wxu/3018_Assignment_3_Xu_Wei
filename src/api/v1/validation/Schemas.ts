@@ -31,4 +31,38 @@ export const Schemas = {
             }),
         }),
     },
+    // GET /posts/:id - Get single post
+    getById: {
+        params: Joi.object({
+            id: Joi.string().required().messages({
+                "any.required": "ID is required",
+                "string.empty": "ID cannot be empty",
+            }),
+        }),
+    },
+
+    // PUT /posts/:id - Update post
+    update: {
+        params: Joi.object({
+            id: Joi.string().required().messages({
+                "any.required": "ID is required",
+                "string.empty": "ID cannot be empty",
+            }),
+        }),
+        body: Joi.object({
+            content: Joi.string().optional().messages({
+                "string.empty": "Content cannot be empty",
+            }),
+        }),
+    },
+
+    // DELETE /posts/:id - Delete post
+    delete: {
+        params: Joi.object({
+            id: Joi.string().required().messages({
+                "any.required": "ID is required",
+                "string.empty": "ID cannot be empty",
+            }),
+        }),
+    },
 };

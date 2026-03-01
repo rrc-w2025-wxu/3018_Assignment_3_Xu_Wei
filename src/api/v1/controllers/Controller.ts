@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as Service from "../services/Service";
 import { HealthCheckResponse } from "../../../interface_properties";
 import { ValidationError } from "joi";
+import { HTTP_STATUS } from "../../../constants/httpConstants";
 
 /**
  * Check the health status of the service.
@@ -41,3 +42,9 @@ export const createController = async (req: Request, res: Response) => {
         }
     }
 };
+
+export const allEventsController = async (req: Request, res: Response):Promise<void> => {
+    const allEvents = await Service.getAllEvents();
+    const count:number = allEvents.length;
+    res.status(HTTP_STATUS.OK).json({ message:"Events retrieved", count:count, data: allEvents });
+}
