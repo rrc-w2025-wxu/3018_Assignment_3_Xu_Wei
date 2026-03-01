@@ -19,7 +19,12 @@ const getNextTimestamp = () => {
     return new Date(lastTimestamp);
 };
 
-
+/**
+ * Create a new event
+ * @param data - Partial event data to create
+ * @returns Returns the complete Events object after creation
+ * @throws Throws an error if creation fails
+ */
 export const createEvent = async (data: Partial<Events>): Promise<Events> => {
     try{
         const validated = validateData(Schemas.create.body, data) as Partial<Events>;
@@ -49,6 +54,11 @@ export const createEvent = async (data: Partial<Events>): Promise<Events> => {
     }
 };
 
+/**
+ * Retrieve all events
+ * @returns Returns an array of all Events
+ * @throws Throws an error if retrieval fails
+ */
 export const getAllEvents = async(): Promise<Events[]> => {
     try{
         const allEvents = await firestoreRepository.getDocuments("events");
@@ -78,6 +88,12 @@ export const getAllEvents = async(): Promise<Events[]> => {
     }
 };
 
+/**
+ * Retrieve a single event by ID
+ * @param id - Event ID
+ * @returns Returns the Events object if found, otherwise null
+ * @throws Throws an error if retrieval fails
+ */
 export const getEvent = async(id:string): Promise<Events | null> => {
     try{
         const event = await firestoreRepository.getDocumentById("events", id);
@@ -106,6 +122,13 @@ export const getEvent = async(id:string): Promise<Events | null> => {
     }
 };
 
+/**
+ * Update an existing event by ID
+ * @param id - Event ID
+ * @param data - Partial event data to update
+ * @returns Returns the updated Events object, or null if event does not exist
+ * @throws Throws an error if update fails
+ */
 export const updateEvent = async(id:string, data:Partial<Events>): Promise<Events | null> => {
     try{
         const event = await firestoreRepository.getDocumentById("events", id);
@@ -136,6 +159,12 @@ export const updateEvent = async(id:string, data:Partial<Events>): Promise<Event
     }
 };
 
+/**
+ * Delete an event by ID
+ * @param id - Event ID
+ * @returns Returns the deleted Events object, or null if event does not exist
+ * @throws Throws an error if deletion fails
+ */
 export const deleteEvent = async(id:string):Promise<Events | null> => {
     try{
         const doc = await firestoreRepository.getDocumentById("events", id);
