@@ -1,5 +1,4 @@
 import { db } from "../../../../config/firebaseConfig";
-import { FirestoreDataTypes } from "../../../types/firestore";
 
 /**
  * Creates a new document in a specified Firestore collection.
@@ -9,7 +8,7 @@ import { FirestoreDataTypes } from "../../../types/firestore";
  */
 export const createDocument = async <T>(
     collectionName: string,
-    data: Partial<FirestoreDataTypes>,
+    data: Partial<T>,
     id?: string
 ): Promise<string> => {
     try {

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ObjectSchema } from "joi";
 
-import { MiddlewareFunction } from "../../../types/expressTypes";
+import { MiddlewareFunction } from "../../../type/expressTypes";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 
 interface RequestSchemas {
@@ -80,7 +80,7 @@ export const validateRequest = (
             // If there are any validation errors, return them
             if (errors.length > 0) {
                 return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                    error: `Validation error: ${errors.join(", ")}`,
+                    message: `Validation error: ${errors.join(", ")}`,
                 });
             }
 

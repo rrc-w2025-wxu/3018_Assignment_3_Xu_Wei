@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import * as postService from "../services/postService";
-import { successResponse } from "../models/responseModel";
-import { HealthCheckResponse } from "src/interface_properties";
+import { Request, Response } from "express";
+import * as Service from "../services/Service";
+import { HealthCheckResponse } from "../../../interface_properties";
+import { ValidationError } from "joi";
 
 /**
  * Check the health status of the service.
@@ -21,5 +21,23 @@ export const itemsHealthCheck = (req: Request, res: Response): void => {
     res.json(healthCheck);
 }
 
+export const createController = async (req: Request, res: Response) => {
+    try {
+        
+        const newEventData = await Service.createEvent(req.body);
 
-export const items
+        res.status(200).json({
+            message: "Event created",
+            data: newEventData,
+        });
+    } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+            const firstMessage = error.details[0]?.message ?? "Validation error";
+            res.status(400).json({ message: firstMessage });
+        } else if (error instanceof Error) {
+            res.status(500).json({ message: error.message });
+        } else {
+            res.status(500).json({ message: "Unknown error" });
+        }
+    }
+};
