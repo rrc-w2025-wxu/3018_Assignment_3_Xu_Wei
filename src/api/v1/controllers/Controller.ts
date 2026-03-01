@@ -34,18 +34,18 @@ export const createController = async (req: Request, res: Response) => {
         
         const newEventData = await Service.createEvent(req.body);
 
-        res.status(200).json({
+        res.status(HTTP_STATUS.CREATED).json({
             message: "Event created",
             data: newEventData,
         });
     } catch (error: unknown) {
         if (error instanceof ValidationError) {
             const firstMessage = error.details[0]?.message ?? "Validation error";
-            res.status(400).json({ message: firstMessage });
+            res.status(HTTP_STATUS.BAD_REQUEST).json({ message: firstMessage });
         } else if (error instanceof Error) {
-            res.status(500).json({ message: error.message });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
         } else {
-            res.status(500).json({ message: "Unknown error" });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
         }
     }
 };
@@ -63,9 +63,9 @@ export const allEventsController = async (req: Request, res: Response):Promise<v
         res.status(HTTP_STATUS.OK).json({ message:"Events retrieved", count:count, data: allEvents });
     }catch (error: unknown) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: "Unknown error" });
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
     }
   }
 };
@@ -89,9 +89,9 @@ export const singleEventController = async (req: Request<{ id:string }>, res: Re
         return res.status(HTTP_STATUS.OK).json({ message:"Event retrieved", data: event });
     }catch (error: unknown) {
     if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      return res.status(500).json({ message: "Unknown error" });
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
     }
   }
 };
@@ -116,9 +116,9 @@ export const updateEventController = async (req: Request<{ id:string }, Partial<
         return res.status(HTTP_STATUS.OK).json({message:"Event updated", data: updateEvent});
     }catch (error: unknown) {
     if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      return res.status(500).json({ message: "Unknown error" });
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
     }
   }  
 };
@@ -142,9 +142,9 @@ export const deleteEventController = async (req: Request<{ id:string }>, res: Re
         return res.status(HTTP_STATUS.OK).json({ message: `${id} deleted`, data: deleteevent });
     }catch (error: unknown) {
     if (error instanceof Error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      return res.status(500).json({ message: "Unknown error" });
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
     }
   }  
 };
