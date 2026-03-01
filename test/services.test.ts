@@ -1,42 +1,37 @@
-import request from "supertest";
-import app from "../src/app"; // Express app
-import { HTTP_STATUS } from "../src/constants/httpConstants";
 
-describe("Events Controller", () => {
-  describe("POST /api/v1/events", () => {
-    it("should create a new event and return message + data", async () => {
-      const payload = {
-        name: "Tech Workshop",
-        date: "2025-12-25T09:00:00.000Z",
-        capacity: 50,
-        registrationCount: 0,
-        status: "active",
-        category: "workshop",
-      };
+import { createEvent, getAllEvents, getEvent, updateEvent, deleteEvent } from "../src/api/v1/services/Service";
+import { Events } from "../src/api/v1/models/eventsModel";
 
-      const response = await request(app)
-        .post("/api/v1/events")
-        .send(payload);
-
-      expect(response.status).toBe(HTTP_STATUS.OK);
-      expect(response.body).toHaveProperty("message", "Event created");
-      expect(response.body).toHaveProperty("data");
-      expect(response.body.data).toHaveProperty("id");
-      expect(response.body.data.name).toBe(payload.name);
-      expect(response.body.data.capacity).toBe(payload.capacity);
-    });
+describe("Event Service", () => {
+  it("should create a new event", async () => {
+    const data: Partial<Events> = { 
+        name: "Test Event", 
+        date: new Date("2025-12-25T09:00:00.000Z"),
+        capacity: 100 };
+    const event = await createEvent(data);
+    expect(event).toHaveProperty("id");
+    expect(event.name).toBe("Test Event");
   });
 
-  describe("GET /api/v1/events", () => {
-    it("should return all events", async () => {
-      const response = await request(app).get("/api/v1/events");
+  it("should get all events", async () => {
+    const events = await getAllEvents();
+    expect(events.length).toBeGreaterThan(0);
+    expect(events[0]).toHaveProperty("id");
+  });
 
-      expect(response.status).toBe(HTTP_STATUS.OK);
-      expect(response.body).toHaveProperty("message", "Events retrieved");
-      expect(Array.isArray(response.body.data)).toBe(true);
-      expect(response.body.data.length).toBeGreaterThan(0);
-      expect(response.body.data[0]).toHaveProperty("id");
-      expect(response.body.data[0]).toHaveProperty("name");
-    });
+  it("should get a single event by id", async () => {
+    const event = await getEvent("evt_000001");
+    expect(event).not.toBeNull();
+    expect(event!.id).toBe("evt_000001");
+  });
+
+  it("should update an event", async () => {
+    const updated = await updateEvent("evt_000001", { capacity: 200 });
+    expect(updated!.capacity).toBe(200);
+  });
+
+  it("should delete an event", async () => {
+    const deleted = await deleteEvent("evt_000001");
+    expect(deleted).toHaveProperty("id", "evt_000001");
   });
 });

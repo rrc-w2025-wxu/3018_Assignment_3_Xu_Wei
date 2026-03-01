@@ -47,7 +47,6 @@ export const createEvent = async (data: Partial<Events>): Promise<Events> => {
         throw new Error("Failed to create event: Unknown error");
         }
     }
-    
 };
 
 export const getAllEvents = async(): Promise<Events[]> => {
@@ -162,4 +161,4 @@ export const deleteEvent = async(id:string):Promise<Events | null> => {
         throw new Error("Failed to create event: Unknown error");
         }
     }
-}
+};

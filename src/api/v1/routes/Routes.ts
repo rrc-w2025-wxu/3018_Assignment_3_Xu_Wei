@@ -10,7 +10,10 @@ const router = express.Router();
 router.get("/health", itemsHealthCheck);
 
 // Create event - validates body only
-router.post("/events", validateRequest(Schemas.create), Controller.createController);
+router.post("/events", 
+    validateRequest(Schemas.create), 
+    Controller.createController
+);
 
 // Get all events - validates body only
 router.get("/events", Controller.allEventsController);
