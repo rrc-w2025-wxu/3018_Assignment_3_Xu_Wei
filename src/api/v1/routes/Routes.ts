@@ -16,7 +16,11 @@ router.post("/events", validateRequest(Schemas.create), Controller.createControl
 router.get("/events", Controller.allEventsController);
 
 // Get a single event - validates body only
-router.get("/events/:id", Controller.allEventsController);
+router.get(
+    "/:id",
+    validateRequest(Schemas.getById),
+    Controller
+);
 
 // Update a single event - validates body only
 router.put("/events/:id", Controller.allEventsController);

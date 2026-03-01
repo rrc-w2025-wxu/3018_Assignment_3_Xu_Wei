@@ -42,6 +42,9 @@ export const createEvent = async (data: Partial<Events>): Promise<Events> => {
 };
 
 export const getAllEvents = async(): Promise<Events[]> => {
-    const allEvents = firestoreRepository.getAllEvents();
-    return allEvents;
+    const allEvents = await firestoreRepository.getDocuments("events");
+    return allEvents.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+    })) as Events[];
 }

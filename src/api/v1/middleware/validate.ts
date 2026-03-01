@@ -6,10 +6,12 @@ import { HTTP_STATUS } from "../../../constants/httpConstants";
 
 interface RequestSchemas {
     body?: ObjectSchema;
+    params?: ObjectSchema;
 }
 
 interface ValidationOptions {
     stripBody?: boolean;
+    stripParams?: boolean;
 }
 
 /**
@@ -27,6 +29,7 @@ export const validateRequest = (
     // stripParams - Usually don't strip params as they're route-defined
     const defaultOptions = {
         stripBody: true,
+        stripParams: false,
         ...options,
     };
 
@@ -74,6 +77,15 @@ export const validateRequest = (
                     req.body,
                     "Body",
                     defaultOptions.stripBody
+                );
+            }
+
+            if (schemas.params) {
+                req.params = validatePart(
+                    schemas.params,
+                    req.params,
+                    "Params",
+                    defaultOptions.stripParams
                 );
             }
 
