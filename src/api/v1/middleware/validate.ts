@@ -1,18 +1,17 @@
+
 import { Request, Response, NextFunction } from "express";
 import { ObjectSchema } from "joi";
 
-import { MiddlewareFunction } from "../types/expressTypes";
+import { MiddlewareFunction } from "../../../type/expressTypes";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
 
 interface RequestSchemas {
     body?: ObjectSchema;
     params?: ObjectSchema;
-    query?: ObjectSchema;
 }
 
 interface ValidationOptions {
     stripBody?: boolean;
-    stripQuery?: boolean;
     stripParams?: boolean;
 }
 
@@ -31,7 +30,6 @@ export const validateRequest = (
     // stripParams - Usually don't strip params as they're route-defined
     const defaultOptions = {
         stripBody: true,
-        stripQuery: true,
         stripParams: false,
         ...options,
     };
@@ -52,7 +50,7 @@ export const validateRequest = (
              */
             const validatePart = (
                 schema: ObjectSchema,
-                data: any,
+                data: unknown,
                 partName: string,
                 shouldStrip: boolean
             ) => {
@@ -92,19 +90,10 @@ export const validateRequest = (
                 );
             }
 
-            if (schemas.query) {
-                req.query = validatePart(
-                    schemas.query,
-                    req.query,
-                    "Query",
-                    defaultOptions.stripQuery
-                );
-            }
-
             // If there are any validation errors, return them
             if (errors.length > 0) {
                 return res.status(HTTP_STATUS.BAD_REQUEST).json({
-                    error: `Validation error: ${errors.join(", ")}`,
+                    message: `Validation error: ${errors.join(", ")}`,
                 });
             }
 

@@ -1,0 +1,150 @@
+import { Request, Response } from "express";
+import * as Service from "../services/Service";
+import { HealthCheckResponse } from "../../../interface_properties";
+import { ValidationError } from "joi";
+import { HTTP_STATUS } from "../../../constants/httpConstants";
+import { Events } from "../models/eventsModel";
+
+/**
+ * Check the health status of the service.
+ *
+ * GET /api/v1/health
+ *
+ * @param req - Express Request
+ * @param res - Express Response
+ */
+export const itemsHealthCheck = (req: Request, res: Response): void => {
+    const healthCheck:HealthCheckResponse = {
+        status: "OK",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        version: "1.0.0",
+    };
+    res.json(healthCheck);
+}
+
+/**
+ * Controller to create a new event
+ * @param req - Express request, expects event data in req.body
+ * @param res - Express response, returns created event or error
+ * @returns JSON response with status code and created event data
+ */
+export const createController = async (req: Request, res: Response) => {
+    try {
+        
+        const newEventData = await Service.createEvent(req.body);
+
+        res.status(HTTP_STATUS.CREATED).json({
+            message: "Event created",
+            data: newEventData,
+        });
+    } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+            const firstMessage = error.details[0]?.message ?? "Validation error";
+            res.status(HTTP_STATUS.BAD_REQUEST).json({ message: firstMessage });
+        } else if (error instanceof Error) {
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
+        } else {
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
+        }
+    }
+};
+
+/**
+ * Controller to fetch all events
+ * @param req - Express request
+ * @param res - Express response, returns all events or error
+ * @returns JSON response with count and array of events
+ */
+export const allEventsController = async (req: Request, res: Response):Promise<void> => {
+    try {
+        const allEvents = await Service.getAllEvents();
+        const count:number = allEvents.length;
+        res.status(HTTP_STATUS.OK).json({ message:"Events retrieved", count:count, data: allEvents });
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    } else {
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
+    }
+  }
+};
+
+/**
+ * Controller to fetch a single event by ID
+ * @param req - Express request with event ID in req.params.id
+ * @param res - Express response, returns event or error
+ * @returns JSON response with event data or 404 if not found
+ */
+export const singleEventController = async (req: Request<{ id:string }>, res: Response):Promise<Response> => {
+    try {
+        const id:string = req.params.id;
+        if(!id){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event ID is not found"});
+        }
+        const event = await Service.getEvent(id);
+        if(!event){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event is not found"});
+        }
+        return res.status(HTTP_STATUS.OK).json({ message:"Event retrieved", data: event });
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    } else {
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
+    }
+  }
+};
+
+/**
+ * Controller to update an event by ID
+ * @param req - Express request with event ID in req.params.id and updated fields in req.body
+ * @param res - Express response, returns updated event or error
+ * @returns JSON response with updated event data or 404 if not found
+ */
+export const updateEventController = async (req: Request<{ id:string }, Partial<Events>>, res: Response): Promise<Response> => {
+    try {
+        const id:string = req.params.id;
+        if(!id){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event ID is not found"});
+        }
+        const data:Partial<Events> = req.body;
+        const updateEvent = await Service.updateEvent(id, data);
+        if(!updateEvent){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event is not found"});
+        }
+        return res.status(HTTP_STATUS.OK).json({message:"Event updated", data: updateEvent});
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    } else {
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
+    }
+  }  
+};
+
+/**
+ * Controller to delete an event by ID
+ * @param req - Express request with event ID in req.params.id
+ * @param res - Express response, returns deleted event data or error
+ * @returns JSON response with deleted event data or 404 if not found
+ */
+export const deleteEventController = async (req: Request<{ id:string }>, res: Response): Promise<Response> => {
+    try{
+        const id:string = req.params.id;
+        if(!id){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event ID is not found"});
+        }
+        const deleteevent = await Service.deleteEvent(id);
+        if(!deleteevent){
+            return res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Event is not found"});
+        }
+        return res.status(HTTP_STATUS.OK).json({ message: `${id} deleted`, data: deleteevent });
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
+    } else {
+      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Unknown error" });
+    }
+  }  
+};

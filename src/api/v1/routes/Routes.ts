@@ -1,46 +1,40 @@
 import express from "express";
 import { validateRequest } from "../middleware/validate";
-import * as postController from "../controllers/postController";
-import { postSchemas } from "../validation/postSchemas";
+import * as Controller from "../controllers/Controller";
+import { Schemas } from "../validation/Schemas";
+import { itemsHealthCheck } from "../controllers/Controller";
 
 const router = express.Router();
 
-// Create post - validates body only
-router.post(
-    "/",
-    validateRequest(postSchemas.create),
-    postController.createPost
+// Health check endpoint
+router.get("/health", itemsHealthCheck);
+
+// Create event - validates body only
+router.post("/events", 
+    validateRequest(Schemas.create), 
+    Controller.createController
 );
 
-// Get single post - validates params and optional query
+// Get all events
+router.get("/events", Controller.allEventsController);
+
+// Get a single event - validates body and params
 router.get(
-    "/:id",
-    validateRequest(postSchemas.getById),
-    postController.getPost
+    "/events/:id",
+    validateRequest(Schemas.getById),
+    Controller.singleEventController
 );
 
-// Update post - validates both params and body
-router.put(
-    "/:id",
-    validateRequest(postSchemas.update),
-    postController.updatePost
+// Update a single event - validates body and params
+router.put("/events/:id", 
+    validateRequest(Schemas.update), 
+    Controller.updateEventController
 );
 
-// Delete post - validates params only
-router.delete(
-    "/:id",
-    validateRequest(postSchemas.delete),
-    postController.deletePost
-);
-
-// List posts - validates query parameters for filtering/pagination
-router.get("/", validateRequest(postSchemas.list), postController.listPosts);
-
-// Example with custom validation options
-router.post(
-    "/flexible",
-    validateRequest(postSchemas.create, { stripBody: false }),
-    postController.createPostFlexible
+// Delete a single event - validates body and params
+router.delete("/events/:id", 
+    validateRequest(Schemas.delete),
+    Controller.deleteEventController
 );
 
 export default router;
