@@ -15,11 +15,14 @@ describe("Event Service", () => {
      * and the correct name
    */
     it("should create a new event", async () => {
+        // Arrange
         const data: Partial<Events> = { 
             name: "Test Event", 
             date: new Date("2025-12-25T09:00:00.000Z"),
             capacity: 100 };
+        // Act
         const event = await createEvent(data);
+        // Assert
         expect(event).toHaveProperty("id");
         expect(event.name).toBe("Test Event");
     });
@@ -30,7 +33,9 @@ describe("Event Service", () => {
      * and each event has an id property
    */
     it("should get all events", async () => {
+        // Act
         const events = await getAllEvents();
+        // Assert
         expect(events.length).toBeGreaterThan(0);
         expect(events[0]).toHaveProperty("id");
     });
@@ -40,7 +45,9 @@ describe("Event Service", () => {
      * Ensures getEvent returns the correct event object
    */
     it("should get a single event by id", async () => {
+        // Act
         const event = await getEvent("evt_000001");
+        // Assert
         expect(event).not.toBeNull();
         expect(event!.id).toBe("evt_000001");
     });
@@ -50,7 +57,9 @@ describe("Event Service", () => {
      * Ensures updateEvent modifies the specified field correctly
    */
     it("should update an event", async () => {
+        // Arrange & Act
         const updated = await updateEvent("evt_000001", { capacity: 200 });
+        // Assert
         expect(updated!.capacity).toBe(200);
     });
 
@@ -59,7 +68,9 @@ describe("Event Service", () => {
      * Ensures deleteEvent returns the deleted event object
    */
     it("should delete an event", async () => {
+        // Act
         const deleted = await deleteEvent("evt_000001");
+        // Assert
         expect(deleted).toHaveProperty("id", "evt_000001");
     });
     });
