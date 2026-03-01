@@ -15,23 +15,23 @@ router.post("/events",
     Controller.createController
 );
 
-// Get all events - validates body only
+// Get all events
 router.get("/events", Controller.allEventsController);
 
-// Get a single event - validates body only
+// Get a single event - validates body and params
 router.get(
     "/events/:id",
     validateRequest(Schemas.getById),
     Controller.singleEventController
 );
 
-// Update a single event - validates body only
+// Update a single event - validates body and params
 router.put("/events/:id", 
     validateRequest(Schemas.update), 
     Controller.updateEventController
 );
 
-// Delete a single event - validates body only
+// Delete a single event - validates body and params
 router.delete("/events/:id", 
     validateRequest(Schemas.delete),
     Controller.deleteEventController
