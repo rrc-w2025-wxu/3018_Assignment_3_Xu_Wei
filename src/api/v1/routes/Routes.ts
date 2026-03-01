@@ -17,9 +17,9 @@ router.get("/events", Controller.allEventsController);
 
 // Get a single event - validates body only
 router.get(
-    "/:id",
+    "/events/:id",
     validateRequest(Schemas.getById),
-    Controller
+    Controller.singleEventController
 );
 
 // Update a single event - validates body only

@@ -2,6 +2,7 @@ import * as firestoreRepository from "../repositories/firestoreRepository";
 import { Schemas } from "../validation/Schemas";
 import { Events } from "../models/eventsModel";
 import { validateData } from "../../../utils/validateData";
+import { Timestamp } from "firebase-admin/firestore";
 
 // Generate IDs like evt_000001
 let eventCounter = 0;
@@ -43,8 +44,41 @@ export const createEvent = async (data: Partial<Events>): Promise<Events> => {
 
 export const getAllEvents = async(): Promise<Events[]> => {
     const allEvents = await firestoreRepository.getDocuments("events");
-    return allEvents.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-    })) as Events[];
+    return allEvents.docs.map(doc => {
+        const data = doc.data();
+
+        return {
+            id: doc.id,
+            ...data,
+            date: data.date instanceof Timestamp
+                ? data.date.toDate().toISOString()
+                : data.date,
+            createdAt: data.createdAt instanceof Timestamp
+                ? data.createdAt.toDate().toISOString()
+                : data.createdAt,
+            updatedAt: data.updatedAt instanceof Timestamp
+                ? data.updatedAt.toDate().toISOString()
+                : data.updatedAt,
+        } as Events;
+    });
+}
+
+export const getEvent = async(id:string): Promise<Events | null> => {
+    const event = await firestoreRepository.getDocumentById("events", id);
+    if (!event || !event.exists) return null;
+
+    const data = event.data(); 
+    if (!data) return null;
+
+    return {
+        id: event.id,
+        name: data.name,
+        capacity: data.capacity,
+        registrationCount: data.registrationCount,
+        status: data.status,
+        category: data.category,
+        date: data.date instanceof Timestamp ? data.date.toDate().toISOString() : data.date,
+        createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : data.createdAt,
+        updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate().toISOString() : data.updatedAt,
+    } as Events;
 }

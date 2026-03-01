@@ -48,3 +48,9 @@ export const allEventsController = async (req: Request, res: Response):Promise<v
     const count:number = allEvents.length;
     res.status(HTTP_STATUS.OK).json({ message:"Events retrieved", count:count, data: allEvents });
 }
+
+export const singleEventController = async (req: Request< { id:string }>, res: Response):Promise<void> => {
+    const id:string = req.params.id;
+    const event = await Service.getEvent(id);
+    res.status(HTTP_STATUS.OK).json({ message:"Event retrieved", data: event });
+}
