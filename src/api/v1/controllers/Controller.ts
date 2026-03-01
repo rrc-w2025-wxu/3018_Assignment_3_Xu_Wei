@@ -23,6 +23,12 @@ export const itemsHealthCheck = (req: Request, res: Response): void => {
     res.json(healthCheck);
 }
 
+/**
+ * Controller to create a new event
+ * @param req - Express request, expects event data in req.body
+ * @param res - Express response, returns created event or error
+ * @returns JSON response with status code and created event data
+ */
 export const createController = async (req: Request, res: Response) => {
     try {
         
@@ -44,6 +50,12 @@ export const createController = async (req: Request, res: Response) => {
     }
 };
 
+/**
+ * Controller to fetch all events
+ * @param req - Express request
+ * @param res - Express response, returns all events or error
+ * @returns JSON response with count and array of events
+ */
 export const allEventsController = async (req: Request, res: Response):Promise<void> => {
     try {
         const allEvents = await Service.getAllEvents();
@@ -58,6 +70,12 @@ export const allEventsController = async (req: Request, res: Response):Promise<v
   }
 };
 
+/**
+ * Controller to fetch a single event by ID
+ * @param req - Express request with event ID in req.params.id
+ * @param res - Express response, returns event or error
+ * @returns JSON response with event data or 404 if not found
+ */
 export const singleEventController = async (req: Request<{ id:string }>, res: Response):Promise<Response> => {
     try {
         const id:string = req.params.id;
@@ -78,6 +96,12 @@ export const singleEventController = async (req: Request<{ id:string }>, res: Re
   }
 };
 
+/**
+ * Controller to update an event by ID
+ * @param req - Express request with event ID in req.params.id and updated fields in req.body
+ * @param res - Express response, returns updated event or error
+ * @returns JSON response with updated event data or 404 if not found
+ */
 export const updateEventController = async (req: Request<{ id:string }, Partial<Events>>, res: Response): Promise<Response> => {
     try {
         const id:string = req.params.id;
@@ -99,6 +123,12 @@ export const updateEventController = async (req: Request<{ id:string }, Partial<
   }  
 };
 
+/**
+ * Controller to delete an event by ID
+ * @param req - Express request with event ID in req.params.id
+ * @param res - Express response, returns deleted event data or error
+ * @returns JSON response with deleted event data or 404 if not found
+ */
 export const deleteEventController = async (req: Request<{ id:string }>, res: Response): Promise<Response> => {
     try{
         const id:string = req.params.id;
