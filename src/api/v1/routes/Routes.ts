@@ -23,7 +23,10 @@ router.get(
 );
 
 // Update a single event - validates body only
-router.put("/events/:id", Controller.allEventsController);
+router.put("/events/:id", 
+    validateRequest(Schemas.update), 
+    Controller.updateEventController
+);
 
 // Delete a single event - validates body only
 router.delete("/events/:id", Controller.allEventsController);

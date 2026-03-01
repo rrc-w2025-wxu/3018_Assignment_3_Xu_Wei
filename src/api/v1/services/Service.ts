@@ -82,3 +82,27 @@ export const getEvent = async(id:string): Promise<Events | null> => {
         updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate().toISOString() : data.updatedAt,
     } as Events;
 }
+
+export const updateEvent = async(id:string, data:Partial<Events>): Promise<Events> => {
+    const event = await firestoreRepository.getDocumentById("events", id);
+    if(!event || !event.exists){
+        throw new Error(`Event ${id} not found`);
+    }
+    const eventData = event.data()!;
+
+    const FIXED_TIME = new Date("2025-12-18T21:24:50.029Z");
+
+    const updateEventData: Events = {
+        id: event.id,
+        name: data.name ?? eventData.name,
+        date: data.date ?? eventData.date,
+        capacity: data.capacity ?? eventData.capacity,
+        registrationCount: data.registrationCount ?? eventData.registrationCount,
+        status: data.status ?? eventData.status,
+        category: data.category ?? eventData.category,
+        createdAt: FIXED_TIME,
+        updatedAt: FIXED_TIME,
+    };
+    await firestoreRepository.updateDocument<Events>("events", id, updateEventData);
+    return updateEventData;
+}

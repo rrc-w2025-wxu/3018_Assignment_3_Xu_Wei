@@ -50,9 +50,12 @@ export const Schemas = {
             }),
         }),
         body: Joi.object({
-            content: Joi.string().optional().messages({
-                "string.empty": "Content cannot be empty",
-            }),
+            name: Joi.string().optional(),
+            date: Joi.date().iso().optional(),
+            capacity: Joi.number().integer().min(1).optional(),
+            registrationCount: Joi.number().integer().min(0).optional(),
+            status: Joi.string().valid("active", "cancelled", "completed").optional(),
+            category: Joi.string().valid("conference","workshop","meetup","seminar","general").optional(),
         }),
     },
 

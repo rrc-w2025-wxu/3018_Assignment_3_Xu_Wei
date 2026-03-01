@@ -3,6 +3,7 @@ import * as Service from "../services/Service";
 import { HealthCheckResponse } from "../../../interface_properties";
 import { ValidationError } from "joi";
 import { HTTP_STATUS } from "../../../constants/httpConstants";
+import { Events } from "../models/eventsModel";
 
 /**
  * Check the health status of the service.
@@ -44,13 +45,44 @@ export const createController = async (req: Request, res: Response) => {
 };
 
 export const allEventsController = async (req: Request, res: Response):Promise<void> => {
-    const allEvents = await Service.getAllEvents();
-    const count:number = allEvents.length;
-    res.status(HTTP_STATUS.OK).json({ message:"Events retrieved", count:count, data: allEvents });
-}
+    try {
+        const allEvents = await Service.getAllEvents();
+        const count:number = allEvents.length;
+        res.status(HTTP_STATUS.OK).json({ message:"Events retrieved", count:count, data: allEvents });
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "Unknown error" });
+    }
+  }
+};
 
-export const singleEventController = async (req: Request< { id:string }>, res: Response):Promise<void> => {
-    const id:string = req.params.id;
-    const event = await Service.getEvent(id);
-    res.status(HTTP_STATUS.OK).json({ message:"Event retrieved", data: event });
-}
+export const singleEventController = async (req: Request<{ id:string }>, res: Response):Promise<void> => {
+    try {
+        const id:string = req.params.id;
+        const event = await Service.getEvent(id);
+        res.status(HTTP_STATUS.OK).json({ message:"Event retrieved", data: event });
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "Unknown error" });
+    }
+  }
+};
+
+export const updateEventController = async (req: Request<{ id:string }, Partial<Events>>, res: Response): Promise<void> => {
+    try {
+        const id:string = req.params.id;
+        const data:Partial<Events> = req.body;
+        const updateEvent = await Service.updateEvent(id, data);
+        res.status(HTTP_STATUS.OK).json({message:"Event updated", data: updateEvent});
+    }catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "Unknown error" });
+    }
+  }  
+};
