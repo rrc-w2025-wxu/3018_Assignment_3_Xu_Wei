@@ -2,7 +2,7 @@ name: TypeScript Lint and Reviewdog
 on:
     pull_request:
         branches:
-            - main
+            - assignment_5
 jobs:
     lint:
         runs-on: ubuntu-latest
