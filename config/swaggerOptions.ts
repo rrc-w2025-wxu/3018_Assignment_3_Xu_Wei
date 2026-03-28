@@ -1,17 +1,39 @@
-// src/config/swaggerOptions.ts
-import path from "path";
-import swaggerJSDoc from "swagger-jsdoc";
+import swaggerJsdoc from "swagger-jsdoc";
 
-export const generateSwaggerSpec = () => {
-  return swaggerJSDoc({
+const swaggerOptions: swaggerJsdoc.Options = {
     definition: {
-      openapi: "3.0.0",
-      info: {
-        title: "Resource Library API",
-        version: "1.0.0",
-        description: "API documentation for the Resource Library",
-      },
+        openapi: "3.0.0",
+        info: {
+            title: "Assignment 5",
+            version: "1.0.0",
+            description:
+                "This is the API documentation for the Task Management application.",
+        },
+        servers: [
+            {
+                url: "http://localhost:3000/api/v1",
+                description: "Local server",
+            },
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
-    apis: [path.join(__dirname, "../api/v1/routes/*.ts")], 
-  });
+    apis: ["./src/api/v1/routes/*.ts", "./src/api/v1/validations/*.ts"], // Path to the API docs and schemas
+};
+
+// Generate the Swagger spec
+export const generateSwaggerSpec = (): object => {
+    return swaggerJsdoc(swaggerOptions);
 };

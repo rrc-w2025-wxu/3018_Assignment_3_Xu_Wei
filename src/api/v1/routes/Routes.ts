@@ -43,7 +43,7 @@ router.get("/health", itemsHealthCheck);
  * /events:
  *   post:
  *     summary: Create a new event
- *     description: Creates a new event in the system. The request body must follow the create event schema.
+ *     description: Creates a new event in the system. All fields must satisfy the validation rules defined in the create event schema.
  *     tags:
  *       - Events
  *     requestBody:
@@ -51,26 +51,76 @@ router.get("/health", itemsHealthCheck);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CreateEvent'
- *           example:
- *             title: "Board Meeting"
- *             date: "2026-04-01T10:00:00Z"
- *             location: "Conference Room 1"
- *             description: "Monthly strategy meeting"
+ *             type: object
+ *             required:
+ *               - name
+ *               - date
+ *               - capacity
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 3
+ *                 example: "Board Meeting"
+ *                 description: "The name of the event. Must be at least 3 characters long."
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2026-04-01T10:00:00Z"
+ *                 description: "The date of the event. Must be later than 2025-12-17T21:24:50.029Z."
+ *               capacity:
+ *                 type: integer
+ *                 minimum: 5
+ *                 example: 50
+ *                 description: "Maximum number of attendees. Must be an integer ≥ 5."
+ *               status:
+ *                 type: string
+ *                 enum: [active, cancelled, completed]
+ *                 example: "active"
+ *                 description: "The status of the event."
+ *               category:
+ *                 type: string
+ *                 enum: [conference, workshop, meetup, seminar, general]
+ *                 example: "conference"
+ *                 description: "The category of the event."
+ *               registrationCount:
+ *                 type: integer
+ *                 minimum: 0
+ *                 example: 0
+ *                 description: "The number of registered attendees. Must be less than or equal to capacity."
  *     responses:
  *       201:
  *         description: Event successfully created
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Event'
- *             example:
- *               id: "evt_12345"
- *               title: "Board Meeting"
- *               date: "2026-04-01T10:00:00Z"
- *               location: "Conference Room 1"
- *               description: "Monthly strategy meeting"
- *               createdAt: "2026-03-28T10:15:00Z"
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "evt_12345"
+ *                 name:
+ *                   type: string
+ *                   example: "Board Meeting"
+ *                 date:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-04-01T10:00:00Z"
+ *                 capacity:
+ *                   type: integer
+ *                   example: 50
+ *                 status:
+ *                   type: string
+ *                   example: "active"
+ *                 category:
+ *                   type: string
+ *                   example: "conference"
+ *                 registrationCount:
+ *                   type: integer
+ *                   example: 0
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-03-28T10:15:00Z"
  *       400:
  *         description: Bad request - validation failed
  *         content:
@@ -80,7 +130,7 @@ router.get("/health", itemsHealthCheck);
  *               properties:
  *                 error:
  *                   type: string
- *                   example: "Title is required"
+ *                   example: "\"name\" is required, \"capacity\" must be greater than or equal to 5"
  *       500:
  *         description: Internal server error
  *         content:
@@ -145,14 +195,14 @@ router.get("/events", Controller.allEventsController);
  * /events/{id}:
  *   get:
  *     summary: Retrieve a single event by ID
- *     description: Returns a single event object by its unique ID.
+ *     description: Returns a single event object by its unique ID. The "id" parameter is required and must be a non-empty string.
  *     tags:
  *       - Events
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The unique ID of the event
+ *         description: The unique ID of the event. Cannot be empty.
  *         schema:
  *           type: string
  *           example: "evt_12345"
@@ -165,10 +215,12 @@ router.get("/events", Controller.allEventsController);
  *               $ref: '#/components/schemas/Event'
  *             example:
  *               id: "evt_12345"
- *               title: "Board Meeting"
+ *               name: "Board Meeting"
  *               date: "2026-04-01T10:00:00Z"
- *               location: "Conference Room 1"
- *               description: "Monthly strategy meeting"
+ *               capacity: 50
+ *               status: "active"
+ *               category: "conference"
+ *               registrationCount: 0
  *               createdAt: "2026-03-28T10:15:00Z"
  *       400:
  *         description: Bad request - validation failed
@@ -179,7 +231,7 @@ router.get("/events", Controller.allEventsController);
  *               properties:
  *                 error:
  *                   type: string
- *                   example: "Invalid event ID"
+ *                   example: "ID is required"
  *       404:
  *         description: Event not found
  *         content:
@@ -212,14 +264,14 @@ router.get(
  * /events/{id}:
  *   put:
  *     summary: Update an existing event by ID
- *     description: Updates the details of an existing event. The request body must follow the update event schema.
+ *     description: Updates the details of an existing event. The request body fields are all optional but must satisfy the validation rules defined in the update event schema.
  *     tags:
  *       - Events
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The unique ID of the event to update
+ *         description: The unique ID of the event to update. Cannot be empty.
  *         schema:
  *           type: string
  *           example: "evt_12345"
@@ -228,12 +280,38 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UpdateEvent'
- *           example:
- *             title: "Updated Board Meeting"
- *             date: "2026-04-02T14:00:00Z"
- *             location: "Conference Room 2"
- *             description: "Updated monthly strategy meeting"
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 minLength: 3
+ *                 example: "Updated Board Meeting"
+ *                 description: "The name of the event. Optional. If provided, must be at least 3 characters long."
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2026-04-02T14:00:00Z"
+ *                 description: "The date of the event in ISO format. Optional."
+ *               capacity:
+ *                 type: integer
+ *                 minimum: 5
+ *                 example: 50
+ *                 description: "Maximum number of attendees. Optional. Must be an integer ≥ 5."
+ *               registrationCount:
+ *                 type: integer
+ *                 minimum: 0
+ *                 example: 10
+ *                 description: "Number of registered attendees. Optional. Must be ≤ capacity."
+ *               status:
+ *                 type: string
+ *                 enum: [active, cancelled, completed]
+ *                 example: "active"
+ *                 description: "Status of the event. Optional."
+ *               category:
+ *                 type: string
+ *                 enum: [conference, workshop, meetup, seminar, general]
+ *                 example: "conference"
+ *                 description: "Category of the event. Optional."
  *     responses:
  *       200:
  *         description: Event updated successfully
@@ -243,10 +321,12 @@ router.get(
  *               $ref: '#/components/schemas/Event'
  *             example:
  *               id: "evt_12345"
- *               title: "Updated Board Meeting"
+ *               name: "Updated Board Meeting"
  *               date: "2026-04-02T14:00:00Z"
- *               location: "Conference Room 2"
- *               description: "Updated monthly strategy meeting"
+ *               capacity: 50
+ *               status: "active"
+ *               category: "conference"
+ *               registrationCount: 10
  *               createdAt: "2026-03-28T10:15:00Z"
  *       400:
  *         description: Bad request - validation failed
@@ -257,7 +337,7 @@ router.get(
  *               properties:
  *                 error:
  *                   type: string
- *                   example: "Title is required"
+ *                   example: "ID is required, capacity must be ≥ 5"
  *       404:
  *         description: Event not found
  *         content:
@@ -289,14 +369,14 @@ router.put("/events/:id",
  * /events/{id}:
  *   delete:
  *     summary: Delete an event by ID
- *     description: Deletes an existing event from the system by its unique ID.
+ *     description: Deletes an existing event from the system by its unique ID. The "id" parameter is required and cannot be empty.
  *     tags:
  *       - Events
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: The unique ID of the event to delete
+ *         description: The unique ID of the event to delete. Cannot be empty.
  *         schema:
  *           type: string
  *           example: "evt_12345"
@@ -320,7 +400,7 @@ router.put("/events/:id",
  *               properties:
  *                 error:
  *                   type: string
- *                   example: "Invalid event ID"
+ *                   example: "ID is required"
  *       404:
  *         description: Event not found
  *         content:
