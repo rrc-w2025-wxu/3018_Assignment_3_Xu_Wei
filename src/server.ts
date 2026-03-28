@@ -1,22 +1,6 @@
-import express from "express";
-import Routes from "../src/api/v1/routes/Routes";
 
-/**
- * Initialize an Express application
- */
-const app = express();
-
-/**
- * Middleware to parse incoming JSON requests
- * This allows the server to handle JSON request bodies
- */
-app.use(express.json());
-
-/**
- * Mount API routes
- * All routes defined in Routes will be prefixed with /api/v1
- */
-app.use("/api/v1", Routes);
+// src/server.ts
+import app from "./app";
 
 /**
  * Define the port to run the server on
@@ -30,8 +14,3 @@ const PORT: string | number = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
-/**
- * Export the Express app instance for testing or further configuration
- */
-export default app;
