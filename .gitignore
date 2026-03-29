@@ -1,3 +1,4 @@
 node_modules/
 dist/
 assignment-3-502f9-firebase-adminsdk-fbsvc-b093245564.json
+.env

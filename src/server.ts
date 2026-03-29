@@ -1,11 +1,12 @@
-import express, { Express } from "express";
+import 'dotenv/config';
+import { initializeFirebaseAdmin } from '../config/firebaseConfig';
+import app from "./app"; // Express app
 
-// Initialize Express application
-const app: Express = express();
+// Initialize Firebase Admin SDK (e.g., for database or authentication operations)
+initializeFirebaseAdmin(); 
 
-// Define a route
-app.get("/", (req, res) => {
-    res.send("Hello, World!");
+// Use the PORT from environment variables if available; otherwise, default to 3000
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
-
-export default app;
