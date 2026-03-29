@@ -1,8 +1,54 @@
 import Joi from "joi";
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Event:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Name of the event
+ *           minLength: 3
+ *         date:
+ *           type: string
+ *           format: date-time
+ *           description: Date and time of the event (must be in the future)
+ *         capacity:
+ *           type: integer
+ *           description: Maximum number of attendees
+ *           minimum: 5
+ *         status:
+ *           type: string
+ *           description: Current status of the event
+ *           enum: [active, cancelled, completed]
+ *         category:
+ *           type: string
+ *           description: Category of the event
+ *           enum: [conference, workshop, meetup, seminar, general]
+ *         registrationCount:
+ *           type: integer
+ *           description: Current number of registered attendees
+ *           minimum: 0
+ */
 
-// Events operation schemas organized by request part
+/**
+ * @description Joi validation schemas for Events operations
+ */
 export const Schemas = {
-    // POST /posts - Create new post
+    /** 
+   * Schema for creating a new event
+   * @openapi
+   * /events:
+   *   post:
+   *     summary: Create a new event
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/Event'
+   */
     create: {
         body: Joi.object({
             name: Joi.string().min(3).required().messages({
@@ -31,7 +77,20 @@ export const Schemas = {
             }),
         }),
     },
-    // GET /posts/:id - Get single post
+
+    /**
+   * Schema for retrieving an event by ID
+   * @openapi
+   * /events/{id}:
+   *   get:
+   *     summary: Get a single event by ID
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   */
     getById: {
         params: Joi.object({
             id: Joi.string().required().messages({
@@ -41,7 +100,13 @@ export const Schemas = {
         }),
     },
 
-    // PUT /posts/:id - Update post
+    /**
+   * Schema for updating an event by ID
+   * @openapi
+   * /events/{id}:
+   *   put:
+   *     summary: Update an event by ID
+   */
     update: {
         params: Joi.object({
             id: Joi.string().required().messages({
@@ -59,7 +124,13 @@ export const Schemas = {
         }),
     },
 
-    // DELETE /posts/:id - Delete post
+    /**
+   * Schema for deleting an event by ID
+   * @openapi
+   * /events/{id}:
+   *   delete:
+   *     summary: Delete an event by ID
+   */
     delete: {
         params: Joi.object({
             id: Joi.string().required().messages({
