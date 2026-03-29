@@ -47,7 +47,7 @@ const getFirebaseConfig = (): AppOptions => {
         projectId: FIREBASE_PROJECT_ID,
         clientEmail: FIREBASE_CLIENT_EMAIL,
         // Replace escaped newlines in the private key string with actual newlines
-        privateKey: FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+        privateKey: FIREBASE_PRIVATE_KEY,
     };
 
     // Return the app configuration with credentials
@@ -82,4 +82,4 @@ const db: Firestore = getFirestore(app);
 
 const auth: Auth = getAuth(app);
 
-export { db, auth };
+export { db, auth, initializeFirebaseAdmin };

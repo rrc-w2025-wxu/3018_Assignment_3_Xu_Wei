@@ -1,16 +1,10 @@
+import 'dotenv/config';
+import { initializeFirebaseAdmin } from '../config/firebaseConfig';
+import app from "./app"; // Express app
 
-// src/server.ts
-import app from "./app";
+initializeFirebaseAdmin(); 
 
-/**
- * Define the port to run the server on
- * Uses the PORT environment variable if available, otherwise defaults to 3000
- */
-const PORT: string | number = process.env.PORT || 3000;
-
-/**
- * Start the Express server and listen on the defined port
- */
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
