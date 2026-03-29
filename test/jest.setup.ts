@@ -1,6 +1,7 @@
 // __mocks__/firestoreRepository.ts
 import { Timestamp } from "firebase-admin/firestore";
 import { Events } from "../src/api/v1/models/eventsModel";
+jest.mock("../src/api/v1/repositories/firestoreRepository");
 
 /**
  * Global mock for Firestore repository.
