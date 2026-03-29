@@ -147,3 +147,6 @@ Response (200 OK):
       "updatedAt": "2025-12-18T21:24:50.031Z"
     }
 }
+
+## Link to Public Documentation
+ - Full API documentation is available at: https://rrc-w2025-wxu.github.io/3018_Assignment_3_Xu_Wei/
