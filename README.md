@@ -150,3 +150,6 @@ Response (200 OK):
 
 ## Link to Public Documentation
  - Full API documentation is available at: https://rrc-w2025-wxu.github.io/3018_Assignment_3_Xu_Wei/
+
+## Local Documentation Access
+ - When running locally, access the API documentation at http://localhost:3000/api-docs
