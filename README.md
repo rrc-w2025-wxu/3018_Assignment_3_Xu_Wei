@@ -43,7 +43,7 @@ https://rrc-w2025-wxu.github.io/3018_Assignment_3_Xu_Wei/
 
 ## API Request Examples
 
-### Get All Items
+### Get All Events
 
 **Request:**
 
