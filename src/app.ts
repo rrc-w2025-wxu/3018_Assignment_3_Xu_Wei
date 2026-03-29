@@ -12,14 +12,17 @@ import router from "./api/v1/routes/Routes";
 
 // Initialize Express application
 const app: Express = express();
+
 app.use(express.json());
+
 app.use(getHelmetConfig());
+
 //app.use(cors(getCorsOptions()));
 app.use(cors({
-  origin: "*",         
+  origin: "*",
   credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"],       
-}));
+  allowedHeaders: ["Content-Type", "Authorization"],
+}))
 
 setupSwagger(app);
 
