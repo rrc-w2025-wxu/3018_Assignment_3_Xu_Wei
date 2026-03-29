@@ -42,3 +42,108 @@ https://rrc-w2025-wxu.github.io/3018_Assignment_3_Xu_Wei/
  - npx @redocly/cli build-docs openapi.json --output docs/index.html
 
 ## API Request Examples
+
+### Get All Items
+
+**Request:**
+
+```bash
+curl -X GET http://localhost:3000/events \
+  -H 'Content-Type: application/json'
+```
+**Expected Response:**
+Response (200 OK):
+{
+  "message": "Events retrieved",
+  "count": 12,
+  "data": [
+    {
+      "id": "evt_000001",
+      "name": "Small Event",
+      "date": "2025-12-25T09:00:00.000Z",
+      "capacity": 15,
+      "registrationCount": 0,
+      "status": "active",
+      "category": "general",
+      "createdAt": "2025-12-18T21:24:50.030Z",
+      "updatedAt": "2025-12-18T21:24:50.031Z"
+    },
+    {
+      "id": "evt_000002",
+      "name": "Small Event",
+      "date": "2025-12-25T09:00:00.000Z",
+      "capacity": 15,
+      "registrationCount": 0,
+      "status": "active",
+      "category": "general",
+      "createdAt": "2025-12-18T21:24:50.032Z",
+      "updatedAt": "2025-12-18T21:24:50.033Z"
+    },
+}
+
+### Create Event
+
+**Request:**
+
+```bash
+curl -X POST http://localhost:3000/events \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Tech Conference 2025",
+    "date": "2025-12-25T09:00:00.000Z",
+    "capacity": 200,
+    "registrationCount": 5,
+    "status": "active",
+    "category": "conference"
+  }'
+```
+
+**Expected Response:**
+Response (201 OK):
+{
+  "message": "Event created",
+  "data": [
+    {
+      "id": "evt_000001",
+      "name": "Tech Conference 2025",
+      "date": "2025-12-25T09:00:00.000Z",
+      "capacity": 200,
+      "registrationCount": 5,
+      "status": "active",
+      "category": "conference",
+      "createdAt": "2025-12-18T21:24:50.030Z",
+      "updatedAt": "2025-12-18T21:24:50.031Z"
+    }
+}
+
+### Update Event
+
+**Request:**
+
+```bash
+curl -X PUT http://localhost:3000/events/evt_000001 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Tech Conference 2030",
+    "date": "2025-12-25T09:00:00.000Z",
+    "capacity": 800
+  }'
+```
+
+**Expected Response:**
+Response (200 OK):
+{
+  "message": "Event updated",
+  "data": [
+    {
+      "id": "evt_000001",
+      "name": "Tech Conference 2030",
+      "date": "2025-12-25T09:00:00.000Z",
+      "capacity": 800,
+      "registrationCount": 5,
+      "status": "active",
+      "category": "conference",
+      "createdAt": "2025-12-18T21:24:50.030Z",
+      "updatedAt": "2025-12-18T21:24:50.031Z"
+    }
+}
