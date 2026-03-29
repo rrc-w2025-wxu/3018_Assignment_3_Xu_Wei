@@ -12,12 +12,13 @@ import router from "./api/v1/routes/Routes";
 
 // Initialize Express application
 const app: Express = express();
-
+app.use(express.json());
 app.use(getHelmetConfig());
 //app.use(cors(getCorsOptions()));
 app.use(cors({
-  origin: "*",            // 或者你前端的 URL
-  credentials: true        // 如果前端要带 cookie / Authorization
+  origin: "*",         
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],       
 }));
 
 setupSwagger(app);

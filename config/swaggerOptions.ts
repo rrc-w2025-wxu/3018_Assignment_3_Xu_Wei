@@ -11,7 +11,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Assignment 5",
+            title: "Assignment 5 - 0420438",
             version: "1.0.0",
             description:
                 "This is the API documentation for the Task Management application.",
